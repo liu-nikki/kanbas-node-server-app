@@ -1,28 +1,26 @@
-import Database from "../Database/index.js";
-export function findAllCourses() {
-    return Database.courses;
+import model from "./model.js";
+import {UserCourseModel} from "./user-course.schema.js";
+import mongoose from "mongoose";
+export const createCourse = (course) => {
+    delete course._id
+    return model.create(course);
+} 
+export const findAllCourses = () => model.find().lean();
+export const findCourseById = (courseId) => model.findById(courseId);
+export const findCourseByNumber = (number) => model.findOne({number: number});
+export const updateCourse = (courseId, course) =>  model.updateOne({ _id: courseId }, { $set: course });
+export const deleteCourse = (courseId) => model.deleteOne({ _id: courseId });
+
+
+export const findCoursesOfStudent = (userId) => {
+    return UserCourseModel.find({
+       userId: new mongoose.mongo.ObjectId(userId.toString()),
+    }).populate("courseId");
 }
-export function findCoursesForEnrolledUser(userId) {
-    const { courses, enrollments } = Database;
-    const enrolledCourses = courses.filter((course) =>
-        enrollments.some((enrollment) => enrollment.user === userId && enrollment.course === course._id));
-    return enrolledCourses;
-}
-export function createCourse(course) {
-    const newCourse = { ...course, _id: Date.now().toString() };
-    Database.courses = [...Database.courses, newCourse];
-    return newCourse;
-}
-export function deleteCourse(courseId) {
-    const { courses, enrollments } = Database;
-    Database.courses = courses.filter((course) => course._id !== courseId);
-    Database.enrollments = enrollments.filter(
-        (enrollment) => enrollment.course !== courseId
-    );
-}
-export function updateCourse(courseId, courseUpdates) {
-    const { courses } = Database;
-    const course = courses.find((course) => course._id === courseId);
-    Object.assign(course, courseUpdates);
-    return course;
+
+export const createStudentCourseRecord = async (userId, courseId) => {
+    return await UserCourseModel.create({
+        userId: new mongoose.mongo.ObjectId(userId.toString()),
+        courseId: new mongoose.mongo.ObjectId(courseId.toString()),
+    })
 }
