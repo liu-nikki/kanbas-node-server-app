@@ -7,9 +7,6 @@ export default function CourseRoutes(app) {
         res.json(course);
     }
 
-
-
-
     const findAllCourses = async (req, res) => {
         const user = req.user;
         const courses = await dao.findAllCourses();
@@ -33,8 +30,6 @@ export default function CourseRoutes(app) {
             }
             return course;
         }));
-
-
 
     }
     const updateCourse = async (req, res) => {
