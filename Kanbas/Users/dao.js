@@ -1,10 +1,19 @@
 import model from "./model.js";
 export const createUser = (user) => {
-  delete user._id
   return model.create(user);
-} 
+} // implemented later
 export const findAllUsers = () => model.find();
-export const findUserById = (userId) => model.findById(userId);
+export const findUserById = async (userId) => {
+  try {
+    const numericId = parseInt(userId);
+    const user = await model.findOne({ _id: numericId });
+    console.log("Finding user by ID:", numericId, "Found:", user);
+    return user;
+  } catch (error) {
+    console.error("Error in findUserById:", error);
+    throw error;
+  }
+};
 export const findUserByUsername = (username) =>  model.findOne({ username: username });
 export const findUserByCredentials = (username, password) =>  model.findOne({ username, password });
 export const updateUser = (userId, user) =>  model.updateOne({ _id: userId }, { $set: user });

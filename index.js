@@ -8,7 +8,6 @@ import CourseRoutes from "./Kanbas/Courses/routes.js";
 import ModuleRoutes from "./Kanbas/Modules/routes.js";
 import EnrollmentRoutes from "./Kanbas/Enrollments/route.js";
 import AssignmentsRoutes from './Kanbas/Assignments/routes.js';
-import QuizRoutes from "./Kanbas/Quizzes/routes.js";
 import session from "express-session";
 import mongoose from "mongoose";
 
@@ -43,7 +42,6 @@ CourseRoutes(app);
 EnrollmentRoutes(app);
 ModuleRoutes(app);
 AssignmentsRoutes(app);
-QuizRoutes(app)
 Lab5(app);
 Hello(app);
 app.listen(process.env.PORT || 4000)

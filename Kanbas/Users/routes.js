@@ -2,9 +2,9 @@ import * as dao from "./dao.js";
 import * as courseDao from "../Courses/dao.js";
 import * as enrollmentsDao from "../Enrollments/dao.js";
 export default function UserRoutes(app) {
-
   const createUser = async (req, res) => {
-     const user = await dao.createUser(req.body);
+    const newUser = {...req.body, _id: new Date().getTime().toString()};
+     const user = await dao.createUser(newUser);
      res.json(user);
   };
   const deleteUser = async (req, res) => {
@@ -29,10 +29,24 @@ export default function UserRoutes(app) {
     res.json(users);
   };
 
-  const findUserById = async (req, res) => {
-    const user = await dao.findUserById(req.params.userId);
-    res.json(user);
-  };
+    const findUserById = async (req, res) => {
+      try {
+        const { userId } = req.params;
+        if (!userId) {
+          return res.status(400).json({ message: "User ID is required" });
+        }
+
+        const user = await dao.findUserById(userId);
+        if (!user) {
+          return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json(user);
+      } catch (error) {
+        console.error("Error finding user by ID:", error);
+        res.status(500).json({ message: "Internal server error" });
+      }
+    };
 
   const updateUser = async (req, res) => {
     const userId = req.params.userId;
@@ -147,5 +161,5 @@ export default function UserRoutes(app) {
   app.post("/api/users/signout", signout);
   app.post("/api/users/profile", profile);
   app.post("/api/users/:uid/courses/:cid", enrollUserInCourse);
-  app.delete("/api/users/:uid/courses/:cid", unenrollUserFromCourse);
+ app.delete("/api/users/:uid/courses/:cid", unenrollUserFromCourse);
 }
